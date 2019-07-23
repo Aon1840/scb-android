@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".ChartFragment"
+        android:orientation="vertical"
+        tools:background="#4FC3F7">
+
+
+        <RelativeLayout
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                        android:id="@+id/avatarImageView"
+                        android:layout_marginRight="8dp"
+                        android:src="@drawable/cmdev_logo"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"/>
+
+                <TextView
+                        android:id="@+id/titleTextView"
+                        android:layout_toRightOf="@id/avatarImageView"
+                        android:text="title"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:id="@+id/subtitleTextView"
+                        android:layout_below="@id/titleTextView"
+                        android:layout_toRightOf="@id/avatarImageView"
+                        android:text="subtutke"
+                        android:textSize="16sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+        <ImageView
+                android:id="@+id/youtubeImageView"
+                android:src="@drawable/cmdev_default_black"
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:scaleType="centerCrop"/>
+</LinearLayout>
