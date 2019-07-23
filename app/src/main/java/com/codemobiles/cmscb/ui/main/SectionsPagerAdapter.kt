@@ -9,11 +9,12 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.codemobiles.cmscb.ChartFragment
 import com.codemobiles.cmscb.JSONFragment
 import com.codemobiles.cmscb.R
+import com.codemobiles.cmscb.UserAdvanceFragment
 import kotlinx.android.synthetic.main.tab_layout.view.*
 
 
-private val TAB_TITLES = arrayOf<String>("JSON", "CHART")
-private val TAB_ICONS = arrayOf<Int>(R.drawable.ic_tab_json, R.drawable.ic_tab_chart)
+private val TAB_TITLES = arrayOf<String>("JSON", "CHART", "TEST")
+private val TAB_ICONS = arrayOf<Int>(R.drawable.ic_tab_json, R.drawable.ic_tab_chart, R.drawable.ic_tab_json)
 
 
 class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
@@ -21,7 +22,8 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : 
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> JSONFragment()
-            else -> ChartFragment()
+            1 -> ChartFragment()
+            else -> UserAdvanceFragment()
         }
     }
 

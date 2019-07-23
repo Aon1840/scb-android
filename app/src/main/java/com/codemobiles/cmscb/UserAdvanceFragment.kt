@@ -10,26 +10,25 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.codemobiles.cmscb.models.User
+import com.codemobiles.cmscb.models.UserAdvance
 import com.codemobiles.cmscb.network.ApiInterface
-import kotlinx.android.synthetic.main.custom_list.view.titleTextView
-import kotlinx.android.synthetic.main.custom_post_basic.view.*
+import kotlinx.android.synthetic.main.custom_post_advance.view.*
 import kotlinx.android.synthetic.main.fragment_json.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class ChartFragment : Fragment() {
+class UserAdvanceFragment : Fragment() {
 
-    private var mDataArray: ArrayList<User> = ArrayList<User>()
+    private var mDataArray: ArrayList<UserAdvance> = ArrayList<UserAdvance>()
     private lateinit var mAdapter: CustomAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val _view = inflater.inflate(R.layout.fragment_chart, container, false)
+        val _view = inflater.inflate(R.layout.fragment_post_advance, container, false)
 
         mAdapter = CustomAdapter()
 
@@ -44,15 +43,15 @@ class ChartFragment : Fragment() {
     }
 
     private fun feedData(){
-        val call = ApiInterface.getAllPost().getPosts()
+        val call = ApiInterface.getAllUser().getUsers()
         Log.d("----- Test api", call.request().url().toString())
 
-        call.enqueue(object : Callback<List<User>>{
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                Log.d("JSONPLACEHOLDER_FAIL", "------ Error: "+t.message.toString())
+        call.enqueue(object : Callback<List<UserAdvance>>{
+            override fun onFailure(call: Call<List<UserAdvance>>, t: Throwable) {
+                Log.d("JSONPLACEHOLDER_AV_FAIL", "------ Error: "+t.message.toString())
             }
 
-            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+            override fun onResponse(call: Call<List<UserAdvance>>, response: Response<List<UserAdvance>>) {
                 if (response.isSuccessful) {
                     mDataArray.clear()
                     mDataArray.addAll(response.body()!!)
@@ -68,7 +67,7 @@ class ChartFragment : Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomHolder {
             return CustomHolder(
                 LayoutInflater.from(parent.context).inflate(
-                    R.layout.custom_post_basic,
+                    R.layout.custom_post_advance,
                     parent,
                     false
                 )
@@ -83,15 +82,19 @@ class ChartFragment : Fragment() {
         override fun onBindViewHolder(holder: CustomHolder, position: Int) {
             val item = mDataArray[position]
 
-            holder.titleTextView.text = "title: "+item.title
-            holder.bodyTextView.text = "body: "+item.body
+            holder.usernameTextView.text = "Username: "+item.username
+            holder.emailTextView.text = "Email: "+item.email
+            holder.streetTextView.text = "Street: "+item.address.street
+            holder.catchPhraseTextView.text = "CatchPhrease: "+item.company.catchPhrase
         }
 
     }
 
     class CustomHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val titleTextView: TextView = view.titleTextView
-        val bodyTextView: TextView = view.bodyTextView
+        val usernameTextView: TextView = view.usernameTextView
+        val emailTextView: TextView = view.emailTextView
+        val streetTextView: TextView = view.streetTextView
+        val catchPhraseTextView: TextView = view.catchPhraseTextView
     }
 
 
