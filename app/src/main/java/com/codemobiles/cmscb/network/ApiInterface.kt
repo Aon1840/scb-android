@@ -16,8 +16,10 @@ interface ApiInterface {
                     @Query("password") password: String,
                     @Query("type") type: String): Call<YoutubeResponse>
 
+    // [...] json array
     @GET("posts")
     fun getPosts(): Call<List<User>>
+
 
     @GET("users")
     fun getUsers(): Call<List<UserAdvance>>

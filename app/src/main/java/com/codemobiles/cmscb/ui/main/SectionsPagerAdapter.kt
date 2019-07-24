@@ -1,15 +1,14 @@
 package com.codemobiles.cmscb.ui.main
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.codemobiles.cmscb.ChartFragment
-import com.codemobiles.cmscb.JSONFragment
-import com.codemobiles.cmscb.R
-import com.codemobiles.cmscb.UserAdvanceFragment
+import com.codemobiles.cmscb.*
+import com.codemobiles.cmscb.database.UserEntity
 import kotlinx.android.synthetic.main.tab_layout.view.*
 
 
@@ -17,11 +16,24 @@ private val TAB_TITLES = arrayOf<String>("JSON", "CHART", "TEST")
 private val TAB_ICONS = arrayOf<Int>(R.drawable.ic_tab_json, R.drawable.ic_tab_chart, R.drawable.ic_tab_json)
 
 
-class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class SectionsPagerAdapter(
+    private val context: Context,
+    fm: FragmentManager,
+    private val user: UserEntity
+) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> JSONFragment()
+            // pass param of intent to fragment
+            0 -> {
+                val bundle = Bundle()
+                bundle.putParcelable(USER_BEAN, user)
+
+                val jsonFragment = JSONFragment()
+                jsonFragment.arguments = bundle
+
+                jsonFragment
+            }
             1 -> ChartFragment()
             else -> UserAdvanceFragment()
         }

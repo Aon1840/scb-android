@@ -12,7 +12,13 @@ class SuccessActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_success)
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+
+        // รับค่าที่ pass มา
+        val user: UserEntity = intent.getParcelableExtra(USER_BEAN) as UserEntity
+
+
+
+        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager, user)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
@@ -24,10 +30,5 @@ class SuccessActivity : AppCompatActivity() {
             val tab: TabLayout.Tab? = tabs.getTabAt(i)
             tab!!.customView = sectionsPagerAdapter.getTabView(i)
         }
-
-        // รับค่าที่ pass มา
-        val user: UserEntity = intent.getParcelableExtra(USER_BEAN) as UserEntity
-        print("-------user: $user")
-        showToast(user.username + user.password)
     }
 }

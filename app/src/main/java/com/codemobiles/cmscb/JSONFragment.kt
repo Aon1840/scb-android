@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.codemobiles.cmscb.database.UserEntity
 import com.codemobiles.cmscb.models.Youtube
 import com.codemobiles.cmscb.models.YoutubeResponse
 import com.codemobiles.cmscb.network.ApiInterface
@@ -51,8 +53,10 @@ class JSONFragment : Fragment() {
     }
 
     private fun feedData() {
+
+        val user: UserEntity = arguments!!.getParcelable<UserEntity>(USER_BEAN) as UserEntity
         // template ติดต่อกับ network
-        val call = ApiInterface.getClient().getYoutubes("admin","password","songs")
+        val call = ApiInterface.getClient().getYoutubes(user.username,user.password,"songs")
 
         // check request ด้วย
         Log.d("SCB_NETWORK", call.request().url().toString())
@@ -106,11 +110,15 @@ class JSONFragment : Fragment() {
 
             Glide.with(this@JSONFragment)
                 .load(item.avatar_image)
+                .apply(RequestOptions.circleCropTransform())
                 .into(holder.avatarImage)
 
             Glide.with(this@JSONFragment)
                 .load(item.youtube_image)
                 .into(holder.youtubeImageView)
+
+            holder.avatarImage.setTag(R.id.avatarImageView, item.title)
+            holder.itemView.setTag(R.id.view_pager,item.id)
         }
 
     }
@@ -122,6 +130,18 @@ class JSONFragment : Fragment() {
         val titleTextView: TextView = view.titleTextView
         val subTitleTextView: TextView = view.subtitleTextView
         val youtubeImageView: ImageView = view.youtubeImageView
+
+        init {
+            avatarImage.setOnClickListener {
+                val title: String = it.getTag(R.id.avatarImageView) as String
+                //debug
+            }
+
+            view.setOnLongClickListener {
+                val id: String = it.getTag(R.id.view_pager) as String
+                true
+            }
+        }
     }
 
 
