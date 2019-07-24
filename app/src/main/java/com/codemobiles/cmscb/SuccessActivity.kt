@@ -6,6 +6,7 @@ import androidx.viewpager.widget.ViewPager
 import com.codemobiles.cmscb.database.UserEntity
 import com.codemobiles.cmscb.ui.main.SectionsPagerAdapter
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.activity_success.*
 
 class SuccessActivity : AppCompatActivity() {
 
@@ -29,6 +30,32 @@ class SuccessActivity : AppCompatActivity() {
         for (i in 0 until tabs.tabCount) {
             val tab: TabLayout.Tab? = tabs.getTabAt(i)
             tab!!.customView = sectionsPagerAdapter.getTabView(i)
+        }
+
+        setupEventWidgets(sectionsPagerAdapter)
+    }
+
+    private fun setupEventWidgets(sectionsPagerAdapter: SectionsPagerAdapter) {
+        mFabMenu.setClosedOnTouchOutside(true);
+
+        mFabFoods.setOnClickListener{
+            sectionsPagerAdapter.mjsonFragment.feedData("foods")
+            mFabMenu.close(true)
+        }
+
+        mFabSongs.setOnClickListener{
+            sectionsPagerAdapter.mjsonFragment.feedData("songs")
+            mFabMenu.close(true)
+        }
+
+        mFabSuperhero.setOnClickListener{
+            sectionsPagerAdapter.mjsonFragment.feedData("superhero")
+            mFabMenu.close(true)
+        }
+
+        mFabTraining.setOnClickListener{
+            sectionsPagerAdapter.mjsonFragment.feedData("training")
+            mFabMenu.close(true)
         }
     }
 }

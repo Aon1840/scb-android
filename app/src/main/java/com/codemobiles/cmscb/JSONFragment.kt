@@ -2,6 +2,7 @@ package com.codemobiles.cmscb
 
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.codemobiles.cmscb.database.UserEntity
 import com.codemobiles.cmscb.models.Youtube
 import com.codemobiles.cmscb.models.YoutubeResponse
 import com.codemobiles.cmscb.network.ApiInterface
+import com.thefinestartist.ytpa.utils.YouTubeApp
 import kotlinx.android.synthetic.main.custom_list.view.*
 import kotlinx.android.synthetic.main.fragment_json.view.*
 import retrofit2.Call
@@ -28,6 +30,8 @@ class JSONFragment : Fragment() {
 
     private var mDataArray: ArrayList<Youtube> = ArrayList<Youtube>()
     private lateinit var mAdapter:CustomAdapter
+
+    private var mFeedType = "foods"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,16 +51,22 @@ class JSONFragment : Fragment() {
             // _view.recycleView.layoutManager = GridLayoutManager(activity,2)
         }
 
-        feedData()
+        feedData(mFeedType)
+
+        _view.swipeRefresh.setOnRefreshListener {
+            feedData(mFeedType)
+        }
 
         return _view
     }
 
-    private fun feedData() {
+    fun feedData(type: String) {
+
+        mFeedType = type
 
         val user: UserEntity = arguments!!.getParcelable<UserEntity>(USER_BEAN) as UserEntity
         // template ติดต่อกับ network
-        val call = ApiInterface.getClient().getYoutubes(user.username,user.password,"songs")
+        val call = ApiInterface.getClient().getYoutubes(user.username, user.password, mFeedType)
 
         // check request ด้วย
         Log.d("SCB_NETWORK", call.request().url().toString())
@@ -64,6 +74,8 @@ class JSONFragment : Fragment() {
         call.enqueue(object : Callback<YoutubeResponse> {
             override fun onFailure(call: Call<YoutubeResponse>, t: Throwable) {
                 Log.d("SCB_NETWORK", t.message.toString())
+                view?.swipeRefresh?.isRefreshing = false
+
             }
 
             override fun onResponse(call: Call<YoutubeResponse>, response: Response<YoutubeResponse>) {
@@ -76,6 +88,10 @@ class JSONFragment : Fragment() {
                     //important
                     mAdapter.notifyDataSetChanged()
                 }
+
+                Handler().postDelayed({
+                    view?.swipeRefresh?.isRefreshing = false
+                },3000)
             }
 
         })
@@ -139,6 +155,8 @@ class JSONFragment : Fragment() {
 
             view.setOnLongClickListener {
                 val id: String = it.getTag(R.id.view_pager) as String
+
+                YouTubeApp.startVideo(it.context, id)
                 true
             }
         }

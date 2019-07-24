@@ -22,6 +22,8 @@ class SectionsPagerAdapter(
     private val user: UserEntity
 ) : FragmentPagerAdapter(fm) {
 
+    lateinit var mjsonFragment: JSONFragment
+
     override fun getItem(position: Int): Fragment {
         return when (position) {
             // pass param of intent to fragment
@@ -29,10 +31,10 @@ class SectionsPagerAdapter(
                 val bundle = Bundle()
                 bundle.putParcelable(USER_BEAN, user)
 
-                val jsonFragment = JSONFragment()
-                jsonFragment.arguments = bundle
+                mjsonFragment = JSONFragment()
+                mjsonFragment.arguments = bundle
 
-                jsonFragment
+                mjsonFragment
             }
             1 -> ChartFragment()
             else -> UserAdvanceFragment()
