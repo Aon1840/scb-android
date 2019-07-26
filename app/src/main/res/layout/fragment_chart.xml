@@ -1,16 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".JSONFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#252934"
+              android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleView"
-            tools:itemCount="10"
-            tools:listitem="@layout/custom_post_basic"
+    <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="200dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="25dp" />
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+            android:id="@+id/segmented2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal"
+            segmentedgroup:sc_border_width="2dp"
+            segmentedgroup:sc_checked_text_color="#ff0000"
+            segmentedgroup:sc_corner_radius="10dp">
+
+        <RadioButton
+                android:id="@+id/mSliver"
+                style="@style/SegmentedTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sliver" />
+
+        <RadioButton
+                android:id="@+id/mGold"
+                style="@style/SegmentedTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gold" />
+
+        <RadioButton
+                android:id="@+id/mPlatinum"
+                style="@style/SegmentedTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Platinum" />
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+</LinearLayout>
+
+        <!--<?xml version="1.0" encoding="utf-8"?>-->
+        <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:tools="http://schemas.android.com/tools"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--tools:context=".JSONFragment">-->
+
+        <!--<androidx.recyclerview.widget.RecyclerView-->
+        <!--android:id="@+id/recycleView"-->
+        <!--tools:itemCount="10"-->
+        <!--tools:listitem="@layout/custom_post_basic"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
 
 
-</RelativeLayout>
+        <!--</RelativeLayout>-->
+        <!--<FrameLayout-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:tools="http://schemas.android.com/tools"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--tools:context=".JSONFragment">-->
+
+        <!--<ImageView-->
+        <!--app:srcCompat="@drawable/ic_gold_medal"-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="150dp"/>-->
+
+
+        <!--</FrameLayout>-->

@@ -1,98 +1,188 @@
 package com.codemobiles.cmscb
 
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.codemobiles.cmscb.models.User
-import com.codemobiles.cmscb.network.ApiInterface
-import kotlinx.android.synthetic.main.custom_list.view.titleTextView
-import kotlinx.android.synthetic.main.custom_post_basic.view.*
-import kotlinx.android.synthetic.main.fragment_json.view.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.ViewPortHandler
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_chart.view.*
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ChartFragment : Fragment() {
 
-    private var mDataArray: ArrayList<User> = ArrayList<User>()
-    private lateinit var mAdapter: CustomAdapter
+    private lateinit var mChart: LineChart
 
+    private val mDataSets = ArrayList<ILineDataSet>()
+    private var mPriceResult: ChartLineResult? = null
+    private val yVals = ArrayList<Entry>()
+    private val xVals = ArrayList<String>()
+
+
+
+    private var mIndexSelect = 3
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val _view = inflater.inflate(R.layout.fragment_chart, container, false)
+        val view = inflater.inflate(R.layout.fragment_chart, container, false)
 
-        mAdapter = CustomAdapter()
+        mChart = view.chart;
 
-        _view.recycleView.let {
-            it.adapter = mAdapter
-            it.layoutManager = LinearLayoutManager(activity)
-        }
-
-        feedData()
-
-        return _view
+        setUpEventWidget(view)
+        loadData(2)
+        return view
     }
 
-    private fun feedData(){
-        val call = ApiInterface.getAllPost().getPosts()
-        Log.d("----- Test api", call.request().url().toString())
+    private fun setUpEventWidget(view: View) {
+        view.mSliver.setOnClickListener {
+            loadData(0)
+        }
 
-        call.enqueue(object : Callback<List<User>>{
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                Log.d("JSONPLACEHOLDER_FAIL", "------ Error: "+t.message.toString())
+        view.mGold.setOnClickListener {
+            loadData(1)
+        }
+
+        view.mPlatinum.setOnClickListener {
+            loadData(2)
+        }
+    }
+
+    private fun loadData(i: Int) {
+        mDataSets.clear()
+        yVals.clear()
+        xVals.clear()
+
+        if (i % 2 == 0) {
+            mPriceResult =
+                Gson().fromJson<ChartLineResult>(getString(R.string.dummy_data_chart_line_1), ChartLineResult::class.java)
+
+        } else {
+            mPriceResult =
+                Gson().fromJson<ChartLineResult>(getString(R.string.dummy_data_chart_line_2), ChartLineResult::class.java)
+        }
+
+        drawChart()
+    }
+
+    private fun drawChart() {
+        // Main
+        mChart.setBackgroundColor(Color.parseColor("#252934"))
+        mChart.setDescription("SiamGold App.")
+        mChart.setDescriptionColor(Color.parseColor("#FFFFFF"))
+        mChart.setDescriptionTextSize(20f)
+        mChart.setDescriptionPosition(350f, 50f)
+        mChart.setExtraOffsets(5f, 30f, 5f, 5f)
+        mChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onNothingSelected() {
             }
 
-            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                if (response.isSuccessful) {
-                    mDataArray.clear()
-                    mDataArray.addAll(response.body()!!)
-
-                    mAdapter.notifyDataSetChanged()
-                }
+            override fun onValueSelected(e: Entry?, dataSetIndex: Int, h: Highlight?) {
+                mIndexSelect = e!!.xIndex
             }
-
         })
-    }
 
-    inner class CustomAdapter : RecyclerView.Adapter<CustomHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomHolder {
-            return CustomHolder(
-                LayoutInflater.from(parent.context).inflate(
-                    R.layout.custom_post_basic,
-                    parent,
-                    false
-                )
-            )
+
+        // animation
+        //mChart.animateXY(1000,1000, Easing.EasingOption.Linear, Easing.EasingOption.Linear);
+        mChart.animateX(1500, Easing.EasingOption.EaseInCubic)
+
+
+        // left
+        mChart.axisLeft.setDrawLabels(false)
+        mChart.axisLeft.setDrawAxisLine(false)
+        mChart.axisLeft.gridColor = Color.parseColor("#8D8A9A")
+
+
+        // right
+        mChart.axisRight.setDrawLabels(false)
+        mChart.axisRight.setDrawAxisLine(false)
+
+
+        // bottom
+        mChart.xAxis.setDrawLabels(true)
+        mChart.xAxis.textColor = Color.parseColor("#FFFFFF")
+        mChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        mChart.xAxis.gridColor = Color.parseColor("#9d9272")
+        mChart.xAxis.setDrawGridLines(false)
+
+
+        // set data
+        val priceArray = mPriceResult!!.data
+
+        for (i in 0 until priceArray!!.size - 2) {
+            val price = priceArray.get(i).prices.toString() + ""
+            val date = priceArray.get(i).date
+
+            yVals.add(Entry(Integer.valueOf(price).toFloat(), i))
+            xVals.add(date!!)
         }
 
-        override fun getItemCount(): Int {
-            Log.d("TEST-----","------ mDataArray: "+mDataArray.size)
-            return mDataArray.size
-        }
+        mChart.legend.isEnabled = true
+        mChart.legend.textColor = Color.parseColor("#FFFFFF")
+        mChart.legend.textSize = 15f
 
-        override fun onBindViewHolder(holder: CustomHolder, position: Int) {
-            val item = mDataArray[position]
+        val dataSet = LineDataSet(yVals, "Dummy Data")
+        dataSet.color = Color.parseColor("#E91E63")
+        dataSet.lineWidth = 5f
+        dataSet.setDrawCubic(true)
 
-            holder.titleTextView.text = "title: "+item.title
-            holder.bodyTextView.text = "body: "+item.body
-        }
+        dataSet.setDrawFilled(true)
+        dataSet.fillColor = Color.parseColor("#E91E63")
+        dataSet.fillAlpha = 10 //0-100
 
+        dataSet.setDrawCircleHole(true)
+        dataSet.setCircleColor(Color.parseColor("#252934"))
+        dataSet.circleRadius = 12f
+
+        dataSet.valueTextSize = 15f
+        dataSet.valueTypeface = Typeface.DEFAULT
+        dataSet.valueTextColor = Color.parseColor("#FBFBFB")
+        mDataSets.add(dataSet)
+
+        val data = LineData(xVals, mDataSets)
+        data.setValueFormatter(MyValueFormatter())
+        mChart.data = data
     }
 
-    class CustomHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val titleTextView: TextView = view.titleTextView
-        val bodyTextView: TextView = view.bodyTextView
+    inner class MyValueFormatter : ValueFormatter {
+        override fun getFormattedValue(
+            value: Float,
+            entry: Entry,
+            dataSetIndex: Int,
+            viewPortHandler: ViewPortHandler
+        ): String {
+            val result = NumberFormat.getNumberInstance(Locale.US).format(value)
+
+            if (entry.xIndex == mIndexSelect) {
+                return result;
+            }
+            return ""
+        }
     }
-
-
 }
+
+data class ChartLineResult(
+    val title: String? = null,
+    val type: Double = 0.toDouble(),
+    val data: List<DataBean>? = null
+)
+
+data class DataBean(val date: String? = null, val prices: Int = 0)

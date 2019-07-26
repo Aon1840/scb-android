@@ -43,16 +43,16 @@ interface ApiInterface {
             return retrofit!!.create(ApiInterface::class.java)
         }
 
-        fun getAllPost(): ApiInterface {
-            if (retrofit2 == null) {
-                retrofit2 = Retrofit.Builder()
-                    .baseUrl(BASE_URL2)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-            }
-            return retrofit2!!.create(ApiInterface::class.java)
-        }
-
+//        fun getAllPost(): ApiInterface {
+//            if (retrofit2 == null) {
+//                retrofit2 = Retrofit.Builder()
+//                    .baseUrl(BASE_URL2)
+//                    .addConverterFactory(GsonConverterFactory.create())
+//                    .build()
+//            }
+//            return retrofit2!!.create(ApiInterface::class.java)
+//        }
+//
         fun getAllUser(): ApiInterface {
             if (retrofit3 == null) {
                 retrofit3 = Retrofit.Builder()
@@ -60,7 +60,7 @@ interface ApiInterface {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
             }
-            return retrofit2!!.create(ApiInterface::class.java)
+            return retrofit3!!.create(ApiInterface::class.java)
         }
     }
 }

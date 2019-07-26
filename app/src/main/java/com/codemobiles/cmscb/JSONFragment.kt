@@ -67,6 +67,7 @@ class JSONFragment : Fragment() {
         val user: UserEntity = arguments!!.getParcelable<UserEntity>(USER_BEAN) as UserEntity
         // template ติดต่อกับ network
         val call = ApiInterface.getClient().getYoutubes(user.username, user.password, mFeedType)
+        Log.d("------ Test","username: ${user.username} : ${user.password}")
 
         // check request ด้วย
         Log.d("SCB_NETWORK", call.request().url().toString())

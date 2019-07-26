@@ -46,7 +46,7 @@ class UserAdvanceFragment : Fragment() {
         val call = ApiInterface.getAllUser().getUsers()
         Log.d("----- Test api", call.request().url().toString())
 
-        call.enqueue(object : Callback<List<UserAdvance>>{
+        call.enqueue(object : Callback<List<UserAdvance>> {
             override fun onFailure(call: Call<List<UserAdvance>>, t: Throwable) {
                 Log.d("JSONPLACEHOLDER_AV_FAIL", "------ Error: "+t.message.toString())
             }
