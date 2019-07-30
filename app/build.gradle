@@ -18,6 +18,13 @@ android {
 
         // Suppor vector ให้มือถือรุ่นต่ำๆ
         vectorDrawables.useSupportLibrary = true
+
+        // Room exports your database's schema information into a JSON file
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {

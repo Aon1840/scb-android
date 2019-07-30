@@ -12,14 +12,18 @@ data class UserEntity(
     @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "user_id") val userId: String,
     @NonNull val username: String,
-    @NonNull var password: String
+    @NonNull var password: String,
+    @NonNull var role: String,
+    val age: Int?
+
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!
-        // จะใช้ .toString ก็ได้
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readValue(Int::class.java.classLoader) as? Int
     ) {
     }
 
@@ -28,6 +32,8 @@ data class UserEntity(
         parcel.writeString(userId)
         parcel.writeString(username)
         parcel.writeString(password)
+        parcel.writeString(role)
+        parcel.writeValue(age)
     }
 
     override fun describeContents(): Int {
@@ -43,4 +49,5 @@ data class UserEntity(
             return arrayOfNulls(size)
         }
     }
+
 }

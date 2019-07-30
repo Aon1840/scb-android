@@ -5,17 +5,19 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.codemobiles.cmscb.DATABASE_NAME
 
 
 // #step2
-@Database(entities = [UserEntity::class], version = 1, exportSchema = true)
+@Database(entities = [UserEntity::class, CompanyEntity::class], version = 5, exportSchema = true)
 
 // abstract class คือ class ที่ไม่สามารถ new obj ได้ว
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDAO // #step3
+    abstract fun companyDao(): CompanyDAO
 
     companion object {
 
@@ -24,6 +26,49 @@ abstract class AppDatabase : RoomDatabase() {
         // For Singleton instantiation, visible to other threads.
 //        @Volatile
         private var instance: AppDatabase? = null
+
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE Company (id INTEGER AUTO_INCREMENT, name TEXT NOT NULL, address TEXT NOT NULL, PRIMARY KEY (id));")
+            }
+
+
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE User ADD COLUMN role TEXT NOT NULL DEFAULT 'admin'")
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE User ADD COLUMN age TEXT")
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // SQLite supports a limited operations for ALTER.
+                // Changing the type of a column is not directly supported, so this is what we need
+                database.execSQL(
+                    "CREATE TABLE users_new (id INTEGER AUTO_INCREMENT,"
+                            + "user_id TEXT NOT NULL,"
+                            + "username TEXT NOT NULL,"
+                            + "password TEXT NOT NULL,"
+                            + "role TEXT NOT NULL, "
+                            + "age INTEGER, "
+                            + "PRIMARY KEY(id))"
+                )
+                database.execSQL(
+                    "INSERT INTO users_new (id, user_id, username, password, role, age) " +
+                            "SELECT id, user_id, username, password, role, age " +
+                            "FROM user"
+                )
+                database.execSQL("DROP TABLE user")
+                database.execSQL("ALTER TABLE users_new RENAME TO user")
+            }
+        }
 
         fun getInstance(context: Context): AppDatabase {
 
@@ -47,7 +92,11 @@ abstract class AppDatabase : RoomDatabase() {
                         super.onCreate(db)
                         Log.d(TAG, "onCreate")
                     }
-                }).build().also {
+                })
+                    // สร้างตัว migration ขึ้นมายัดใส่
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+
+                    .build().also {
                     instance = it
                     return instance!!
                 }

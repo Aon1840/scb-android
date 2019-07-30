@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 var result = mDatabaseAdapter!!.userDao().queryUser(username)
                 if (result == null) {
                     //insert
-                    mDatabaseAdapter!!.userDao().addUser(UserEntity(null, "scb1", username,password))
+                    mDatabaseAdapter!!.userDao().addUser(UserEntity(null, "scb1", username,password, "admin",22))
                     Toast.makeText(applicationContext, "Insert Successfully!", Toast.LENGTH_LONG).show()
                 }else if (result.password == password){
                     //success
